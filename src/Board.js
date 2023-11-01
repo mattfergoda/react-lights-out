@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Cell from "./Cell";
 import "./Board.css";
 
+
 /** Game board of Lights out.
  *
  * Properties:
@@ -27,18 +28,20 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows, ncols, chanceLightStartsOn }) {
+function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.5 }) {
   const [board, setBoard] = useState(createBoard());
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
-    let initialBoard = [];
-    // TODO: create array-of-arrays of true/false values
+    const initialBoard = Array.from({ length: nrows }, () => (
+      Array.from({ length: ncols }, () => Math.random() <= chanceLightStartsOn)
+    ));
+
     return initialBoard;
   }
 
   function hasWon() {
-    // TODO: check the board in state to determine whether the player has won.
+    return board.flat().every(cell => !cell);
   }
 
   function flipCellsAround(coord) {
@@ -53,21 +56,32 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
         }
       };
 
-      // TODO: Make a (deep) copy of the oldBoard
+      const boardCopy = oldBoard.map(row => [...row]);
 
-      // TODO: in the copy, flip this cell and the cells around it
+      flipCell(y, x, boardCopy);
+      flipCell(y + 1, x, boardCopy);
+      flipCell(y, x + 1, boardCopy);
+      flipCell(y - 1, x, boardCopy);
+      flipCell(y, x - 1, boardCopy);
 
-      // TODO: return the copy
+      return boardCopy;
     });
   }
 
   // if the game is won, just show a winning msg & render nothing else
+  if (hasWon()) {
+    return <h1>You won!</h1>;
+  }
 
-  // TODO
+  return (
+    <div>
+      {board.map(row => row.map(isLit => {
+        <Cell
+          flipCellsAroundMe={flipCellsAround}
+          isLit={isLit} />;
+      }))}
+    </div>);
 
-  // make table board
-
-  // TODO
 }
 
 export default Board;
