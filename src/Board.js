@@ -28,7 +28,7 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.5 }) {
+function Board({ nrows = 2, ncols = 2, chanceLightStartsOn = 0.5 }) {
   const [board, setBoard] = useState(createBoard());
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
@@ -40,10 +40,12 @@ function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.5 }) {
     return initialBoard;
   }
 
+  /**TODO: docstring */
   function hasWon() {
     return board.flat().every(cell => !cell);
   }
 
+  /**TODO: docstring */
   function flipCellsAround(coord) {
     setBoard(oldBoard => {
       const [y, x] = coord.split("-").map(Number);
@@ -74,13 +76,19 @@ function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.5 }) {
   }
 
   return (
-    <div>
-      {board.map(row => row.map(isLit => {
-        <Cell
-          flipCellsAroundMe={flipCellsAround}
-          isLit={isLit} />;
-      }))}
-    </div>);
+    <table className="Board">
+      <tbody>
+        {board.map((row, i) => {
+          return <tr key={i}>{
+            row.map((isLit, j) => {
+              return <Cell
+                key={`${i}-${j}`}
+                flipCellsAroundMe={() => flipCellsAround(`${i}-${j}`)}
+                isLit={isLit} />;
+            })}</tr>;
+        })}
+      </tbody>
+    </table>);
 
 }
 
